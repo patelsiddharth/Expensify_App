@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import numeral from 'numeral';
 
-// // load a locale
-// numeral.register('locale', 'in', {
-//     currency: {
-//         symbol: '₹'
-//     }
-// });
+numeral.register('locale', 'in', {
+    delimiters: {
+        thousands: ' ',
+        decimal: '.'
+    },
+    currency: {
+        symbol: '₹'
+    }
+});
 
-// // switch between locales
-// numeral.locale('in');
+numeral.locale('in');
 
 const ExpenseListItem = ({id, description, amount, createdAt}) => (
     <div>

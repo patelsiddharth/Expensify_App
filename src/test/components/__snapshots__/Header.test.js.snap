@@ -18,17 +18,5 @@ exports[`should render Header correct 1`] = `
   >
     Add Expanse
   </NavLink>
-  <NavLink
-    activeClassName="is-active"
-    to="/edit"
-  >
-    Edit Expanse
-  </NavLink>
-  <NavLink
-    activeClassName="is-active"
-    to="/help"
-  >
-    Help Page
-  </NavLink>
 </header>
 `;

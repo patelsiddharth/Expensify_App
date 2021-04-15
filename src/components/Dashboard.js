@@ -1,10 +1,11 @@
 import React from 'react';
 import ExpenseList from './ExpenseList';
 import ExpenseListFilters from './ExpenseListFilters';
+import ExpensesSummary from './ExpensesSummary';
 
 const ExpenseDashboard = ()=> (
     <div>
-        This is Expensify App DashBoard Page
+        <ExpensesSummary />
         <ExpenseListFilters />
         <ExpenseList />
     </div>
