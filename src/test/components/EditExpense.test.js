@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallow} from 'enzyme';
 import {EditExpanse} from '../../components/EditExpanse';
-import expenses from '../fixtures/expenses.js';
+import expenses from '../fixtures/expenses';
 
 let editExpense, removeExpense, history, wrapper;
 
@@ -13,7 +13,7 @@ beforeEach(() => {
         editExpense={editExpense} 
         removeExpense={removeExpense} 
         history={history}
-        expense={expenses}
+        expense={expenses[2]}
     />);
 })
 

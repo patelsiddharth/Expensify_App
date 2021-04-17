@@ -11,6 +11,7 @@ import filterReducer from './reducers/filters';
 import visibleExpense from './selectors/expenses';
 import 'react-dates/lib/css/_datepicker.css';
 import 'react-dates/initialize';
+import './firebase/firebase';
 
 const store = configureStore();
 const jsx = (
