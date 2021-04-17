@@ -13,7 +13,7 @@ export const startAddExpense = (expenseData = {}) => {
 
         const expense = { description, note, amount, createdAt };
 
-        // We will return this to make sure we get some result in test case
+        //Return value is a promise. We will return this to make sure we get some result in test case
         return database.ref('expenses').push(expense).then((ref) => {
             dispatch(addExpense({
                 id : ref.key,
@@ -35,3 +35,24 @@ export const editExpense = ( id, updates = {} ) => ({
     id,
     updates
 })
+
+//SET_EXPENSES
+export const setExpenses = (expenses) => ({
+    type : 'SET_EXPENSES',
+    expenses
+})
+
+export const startSetExpenses = () => {
+    return (dispatch) => {
+        return database.ref('expenses').once('value').then((snapshot) => {
+            const expenses = [];
+            snapshot.forEach(childSnapshot => {
+                expenses.push({
+                    id : childSnapshot.key,
+                    ...childSnapshot.val()
+                })
+            });
+            dispatch(setExpenses(expenses));
+        })
+    }
+}

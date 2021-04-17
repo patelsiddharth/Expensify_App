@@ -1,10 +1,18 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {startAddExpense ,addExpense, editExpense, removeExpense} from '../../actions/expenses';
+import {startAddExpense ,addExpense, editExpense, removeExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
 const createMockStore = configureMockStore([thunk]);
+
+beforeEach((done) => {
+    const expenseData = {};
+    expenses.forEach(({id, description, amount, note, createdAt}) => {
+        expenseData[id] = {description, amount, note, createdAt};
+    });
+    database.ref('expenses').set(expenseData).then(() => done());
+})
 
 test('Test Remove Expense Action', () => {
     const action = removeExpense({ id : '1123234e'})
@@ -33,7 +41,7 @@ test('Test Add Expense action with value provided', () => {
     })
 })
 
-// we have to call done inorder for test case to complete execution
+// we have to call "done" inorder for test case to complete execution
 test('Should Add Expense to database and store', (done) => {
     const store = createMockStore({});
     const expenseData = {
@@ -81,7 +89,28 @@ test('Should Add Expense to database and store with Default value', () => {
     }).then(snapshot => {
         expect(snapshot.val()).toEqual(expenseData);
         done(); //Without this call, this test case will never complete execution
+    }).catch(e => console.log('test'))
+})
+
+test('Should setup set Expense action object with data', () => {
+    const action = setExpenses(expenses);
+    expect(action).toEqual({
+        type : 'SET_EXPENSES',
+        expenses
     })
+})
+
+test('Should fetch Expenses from firebase', () => {
+    const store = createMockStore({});
+    store.dispatch(startSetExpenses())
+         .then((done) => {
+             const actions = store.getActions();
+             expect(actions[0]).toEqual({
+                 type : 'SET_EXPENSES',
+                 expenses
+             })
+             done();
+         })
 })
 
 // test('Should Add Expense action with Default value', () => {
