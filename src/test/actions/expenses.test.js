@@ -1,6 +1,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {startAddExpense ,addExpense, editExpense, removeExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
+import {startAddExpense ,addExpense, editExpense, startEditExpense, removeExpense, startRemoveExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
@@ -15,12 +15,32 @@ beforeEach((done) => {
 })
 
 test('Test Remove Expense Action', () => {
-    const action = removeExpense({ id : '1123234e'})
+    const id = '1123234e';
+    const action = removeExpense({ id })
     expect(action).toEqual({
         type : 'REMOVE_EXPENSE',
-        id : '1123234e'
+        id
     })
 })
+
+test('Should Remove Expense from firebase', (done) => {
+    const store = createMockStore({});
+    const id = expenses[2].id;
+    store.dispatch(startRemoveExpense({id})).then(()=>{
+        const actions = store.getActions();
+        expect(actions[0]).toEqual({
+            type : 'REMOVE_EXPENSE',
+            id
+        });
+
+        // This is not required but if you want to check if the data is removed or not
+        return database.ref(`expenses/${id}`).once('value');
+    }).then(snapshot => {
+        expect(snapshot.val()).toBeFalsy();
+        done();
+    })
+})
+
 
 test('Test Edit Expense Action',  ()=>{
     const res = editExpense('123qwe', {description : 'Gas Bill'});
@@ -32,6 +52,27 @@ test('Test Edit Expense Action',  ()=>{
         }
     })
 })
+
+test('Should Edit Expense from firebase', (done) => {
+    const store = createMockStore({});
+    const id = expenses[1].id;
+    const updates = {amount : 210}
+    store.dispatch(startEditExpense(id, updates)).then(()=>{
+        const actions = store.getActions();
+        expect(actions[0]).toEqual({
+            type : 'EDIT_EXPENSE',
+            id, 
+            updates
+        });
+
+        // This is not required but if you want to check if the data is removed or not
+        return database.ref(`expenses/${id}`).once('value');
+    }).then(snapshot => {
+        expect(snapshot.val().amount).toBe(updates.amount)
+        done();
+    })
+})
+
 
 test('Test Add Expense action with value provided', () => {
     const res = addExpense(expenses[2]);
