@@ -10,6 +10,7 @@ import {login, logout} from './actions/auth';
 import 'react-dates/lib/css/_datepicker.css';
 import 'react-dates/initialize';
 import {firebase} from './firebase/firebase';
+import LoadingPage from './components/LoadingPage';
 
 const store = configureStore();
 const jsx = (
@@ -31,7 +32,7 @@ const RenderApp = () => {
     }
 }
 
-ReactDOM.render(<p>Loading ...</p>, document.getElementById('app'));
+ReactDOM.render(<LoadingPage/>, document.getElementById('app'));
 
 // This method is executed when user status moves from being unauthenticated to authenticated or from authenticated to unauthenticated
 firebase.auth().onAuthStateChanged( user => {

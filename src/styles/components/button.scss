@@ -1,0 +1,33 @@
+.button
+{
+    display: inline-block;
+    line-height: 1;
+    background-color: $blue;
+    color: white;
+    border: none;
+    padding: $s-size;
+    border-radius: 5px;
+    font-size: $font-size-large;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all .5s;
+    outline: none;
+    text-decoration: none;
+}
+
+.button--link
+{
+    background: none;
+}
+
+.button--animate:hover
+{
+    transform: translateY(-2px);
+    transition: all .5s;
+    box-shadow: 0 10px 12px -3px #50161b40;
+}
+
+.button--secondary
+{
+    background: red;
+}
