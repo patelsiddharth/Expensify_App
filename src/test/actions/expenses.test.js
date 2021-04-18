@@ -1,9 +1,14 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {startAddExpense ,addExpense, editExpense, startEditExpense, removeExpense, startRemoveExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
+import {
+    addExpense, startAddExpense , editExpense, startEditExpense, 
+    removeExpense, startRemoveExpense, setExpenses, startSetExpenses
+} from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
+const uid = 'testuserid';
+const defaultAuthState = { auth : { uid } };
 const createMockStore = configureMockStore([thunk]);
 
 beforeEach((done) => {
@@ -11,10 +16,10 @@ beforeEach((done) => {
     expenses.forEach(({id, description, amount, note, createdAt}) => {
         expenseData[id] = {description, amount, note, createdAt};
     });
-    database.ref('expenses').set(expenseData).then(() => done());
+    database.ref(`users/${uid}/expenses`).set(expenseData).then(() => done());
 })
 
-test('Test Remove Expense Action', () => {
+test('should setup Remove Expense Action object', () => {
     const id = '1123234e';
     const action = removeExpense({ id })
     expect(action).toEqual({
@@ -24,7 +29,7 @@ test('Test Remove Expense Action', () => {
 })
 
 test('Should Remove Expense from firebase', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const id = expenses[2].id;
     store.dispatch(startRemoveExpense({id})).then(()=>{
         const actions = store.getActions();
@@ -34,7 +39,7 @@ test('Should Remove Expense from firebase', (done) => {
         });
 
         // This is not required but if you want to check if the data is removed or not
-        return database.ref(`expenses/${id}`).once('value');
+        return database.ref(`users/${uid}/expenses/${id}`).once('value');
     }).then(snapshot => {
         expect(snapshot.val()).toBeFalsy();
         done();
@@ -54,7 +59,7 @@ test('Test Edit Expense Action',  ()=>{
 })
 
 test('Should Edit Expense from firebase', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const id = expenses[1].id;
     const updates = {amount : 210}
     store.dispatch(startEditExpense(id, updates)).then(()=>{
@@ -66,7 +71,7 @@ test('Should Edit Expense from firebase', (done) => {
         });
 
         // This is not required but if you want to check if the data is removed or not
-        return database.ref(`expenses/${id}`).once('value');
+        return database.ref(`users/${uid}/expenses/${id}`).once('value');
     }).then(snapshot => {
         expect(snapshot.val().amount).toBe(updates.amount)
         done();
@@ -84,7 +89,7 @@ test('Test Add Expense action with value provided', () => {
 
 // we have to call "done" inorder for test case to complete execution
 test('Should Add Expense to database and store', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const expenseData = {
         description : 'Mouse',
         note : 'Bought mouse',
@@ -101,7 +106,7 @@ test('Should Add Expense to database and store', (done) => {
                 ...expenseData
             }
         })
-        return database.ref(`expenses/${action[0].expense.id}`).once('value')
+        return database.ref(`users/${uid}/expenses/${action[0].expense.id}`).once('value')
     }).then(snapshot => {
         expect(snapshot.val()).toEqual(expenseData);
         done(); //Without this call, this test case will never complete execution
@@ -109,7 +114,7 @@ test('Should Add Expense to database and store', (done) => {
 })
 
 test('Should Add Expense to database and store with Default value', () => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const expenseData = {
         description : '',
         note : '',
@@ -126,7 +131,7 @@ test('Should Add Expense to database and store with Default value', () => {
                 ...expenseData
             }
         })
-        return database.ref(`expenses/${action[0].expense.id}`).once('value')
+        return database.ref(`users/${uid}/expenses/${action[0].expense.id}`).once('value')
     }).then(snapshot => {
         expect(snapshot.val()).toEqual(expenseData);
         done(); //Without this call, this test case will never complete execution
@@ -142,7 +147,7 @@ test('Should setup set Expense action object with data', () => {
 })
 
 test('Should fetch Expenses from firebase', () => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     store.dispatch(startSetExpenses())
          .then((done) => {
              const actions = store.getActions();
