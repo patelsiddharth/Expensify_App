@@ -8,7 +8,7 @@ exports[`should render Header correct 1`] = `
   <NavLink
     activeClassName="is-active"
     exact={true}
-    to="/"
+    to="/dashboard"
   >
     DashBoard
   </NavLink>
@@ -18,5 +18,10 @@ exports[`should render Header correct 1`] = `
   >
     Add Expanse
   </NavLink>
+  <button
+    onClick={[Function]}
+  >
+    Logout
+  </button>
 </header>
 `;

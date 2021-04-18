@@ -3,7 +3,7 @@
 exports[`Should render EditExpense Page Correctly 1`] = `
 <div>
   <Link
-    to="/"
+    to="/dashboard"
   >
     Back to Dashboard
   </Link>
